@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/*.key
+data/images/
+demo/out/*.webm
+ml/data/raw/
+ml/data/synth/
+.pytest_cache/
+.DS_Store

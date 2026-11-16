@@ -1,0 +1,119 @@
+{
+ "model": [
+  {
+   "split": "synthetic-holdout",
+   "n": 252,
+   "macro_f1": 0.9877,
+   "accuracy": 0.9881,
+   "confusion": [
+    [
+     77,
+     2,
+     1
+    ],
+    [
+     0,
+     81,
+     0
+    ],
+    [
+     0,
+     0,
+     91
+    ]
+   ],
+   "labels": [
+    "flint",
+    "green",
+    "amber"
+   ]
+  },
+  {
+   "split": "real-photos-holdout",
+   "n": 23,
+   "macro_f1": 0.8593,
+   "accuracy": 0.8696,
+   "confusion": [
+    [
+     4,
+     0,
+     1
+    ],
+    [
+     0,
+     4,
+     2
+    ],
+    [
+     0,
+     0,
+     12
+    ]
+   ],
+   "labels": [
+    "flint",
+    "green",
+    "amber"
+   ]
+  }
+ ],
+ "baseline": [
+  {
+   "split": "synthetic-holdout",
+   "n": 252,
+   "macro_f1": 0.3037,
+   "accuracy": 0.4246,
+   "confusion": [
+    [
+     13,
+     4,
+     63
+    ],
+    [
+     0,
+     3,
+     78
+    ],
+    [
+     0,
+     0,
+     91
+    ]
+   ],
+   "labels": [
+    "flint",
+    "green",
+    "amber"
+   ]
+  },
+  {
+   "split": "real-photos-holdout",
+   "n": 23,
+   "macro_f1": 0.3305,
+   "accuracy": 0.5652,
+   "confusion": [
+    [
+     0,
+     0,
+     5
+    ],
+    [
+     0,
+     1,
+     5
+    ],
+    [
+     0,
+     0,
+     12
+    ]
+   ],
+   "labels": [
+    "flint",
+    "green",
+    "amber"
+   ]
+  }
+ ],
+ "raw_sklearn_vs_export_max_dev": 0.0
+}

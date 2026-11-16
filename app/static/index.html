@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClearLot — find the crate that can close</title>
+<link rel="stylesheet" href="/static/app.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230e1412'/><path d='M13 6h6v6l4 8a4 4 0 0 1-3.6 6H12.6A4 4 0 0 1 9 20l4-8z' fill='%237ef0c0'/></svg>">
+</head>
+<body>
+<header class="top">
+  <div class="mark">
+    <span class="glyph"></span>
+    <span class="word">clear<i>lot</i></span>
+    <span class="tagline">colour-sorted crates that a beneficiation plant will actually take</span>
+  </div>
+  <div class="lotbar" id="lotbar">
+    <div class="lotbar-item"><span class="k">crate</span><b id="lot-id">—</b></div>
+    <div class="lotbar-item"><span class="k">status</span><span class="pill" id="lot-status">open</span></div>
+    <div class="lotbar-item"><span class="k">purity</span><b id="lot-purity">—</b></div>
+  </div>
+  <nav class="nav">
+    <a href="#intake" data-view="intake" class="on">Intake</a>
+    <a href="#review" data-view="review">Review <span class="count" id="nav-review">0</span></a>
+    <a href="#receipt" data-view="receipt">Receipt</a>
+    <a href="#ledger" data-view="ledger">Ledger</a>
+  </nav>
+</header>
+
+<main>
+  <!-- ------------------------------------------------------------ INTAKE -->
+  <section id="intake" class="view on">
+    <div class="stage">
+      <div class="station">
+        <div class="panel-hd">
+          <span class="kh">capture station</span>
+          <span class="sub" id="station-sub">one bottle inside the guide, then capture</span>
+        </div>
+        <div class="viewport" id="viewport">
+          <img id="frame-bg" class="bg" alt="" aria-hidden="true">
+          <img id="frame" alt="last captured bottle">
+          <div class="guide"><span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span></div>
+          <div class="scan" id="scan"></div>
+          <div class="stamp" id="stamp" hidden>
+            <div class="stamp-chip"></div>
+            <div class="stamp-body">
+              <div class="stamp-color"></div>
+              <div class="stamp-conf"><span></span></div>
+            </div>
+          </div>
+          <div class="empty" id="viewport-empty">
+            <span class="kh">no frame yet</span>
+            <p>Point the station at one bottle and capture. The classifier only ever asks about colour — ceramic and heat-resistant glass stay a human call.</p>
+          </div>
+        </div>
+        <div class="station-ft">
+          <button class="btn primary" id="btn-capture"><span class="dot"></span>Capture bottle</button>
+          <label class="btn ghost">
+            Upload photo
+            <input type="file" id="file" accept="image/*" hidden>
+          </label>
+          <span class="hint" id="sample-hint">sample photo replay</span>
+        </div>
+      </div>
+
+      <div class="ledger-wrap">
+        <div class="panel-hd">
+          <span class="kh">bottle ledger</span>
+          <span class="sub">every capture is a row: what the model said, what a human decided</span>
+        </div>
+        <div class="ledger" id="ledger"></div>
+      </div>
+    </div>
+
+    <aside class="crate">
+      <div class="panel-hd">
+        <span class="kh">the crate</span>
+        <span class="sub">graded before it leaves the bar</span>
+      </div>
+
+      <div class="spec" id="spec">
+        <div class="spec-top">
+          <div>
+            <div class="spec-name" id="spec-name">—</div>
+            <div class="spec-receiver" id="spec-receiver">—</div>
+          </div>
+          <select id="spec-select" class="spec-select" title="receiver specification"></select>
+        </div>
+        <div class="spec-rules">
+          <div class="rule"><span class="k">target</span><b id="spec-target">—</b></div>
+          <div class="rule"><span class="k">min purity</span><b id="spec-purity">—</b></div>
+          <div class="rule"><span class="k">min bottles</span><b id="spec-min">—</b></div>
+        </div>
+        <p class="spec-note" id="spec-note"></p>
+      </div>
+
+      <div class="grade">
+        <div class="grade-left">
+          <div class="k">colour purity</div>
+          <div class="big" id="purity">—</div>
+          <div class="threshold" id="threshold">—</div>
+        </div>
+        <div class="grade-right">
+          <div class="barrow"><span class="k">purity vs floor</span></div>
+          <div class="gauge">
+            <div class="gauge-fill" id="gauge"></div>
+            <div class="gauge-mark" id="gauge-mark"></div>
+          </div>
+          <div class="barrow" style="margin-top:18px"><span class="k">composition</span></div>
+          <div class="comp" id="comp">
+            <div class="seg flint" style="width:0"></div>
+            <div class="seg green" style="width:0"></div>
+            <div class="seg amber" style="width:0"></div>
+          </div>
+          <div class="legend" id="legend"></div>
+        </div>
+      </div>
+
+      <div class="blockers" id="blockers"></div>
+
+      <div class="crate-ft">
+        <div class="count" id="count">0 bottles</div>
+        <button class="btn close" id="btn-close">Close crate &amp; issue receipt</button>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ------------------------------------------------------------ REVIEW -->
+  <section id="review" class="view">
+    <div class="wide">
+      <div class="panel-hd">
+        <span class="kh">review queue</span>
+        <span class="sub">the model defers here instead of guessing. a crate cannot close while this list is not empty.</span>
+      </div>
+      <div class="review-grid">
+        <div class="cards" id="review-cards"></div>
+        <aside class="model-card" id="model-card"></aside>
+      </div>
+      <div class="empty-state" id="review-empty" hidden>
+        <div class="kh">queue empty</div>
+        <p>Every bottle in this crate has a decision with a source. That is the only state a crate is allowed to close from.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------------- RECEIPT -->
+  <section id="receipt" class="view">
+    <div class="wide">
+      <div class="panel-hd">
+        <span class="kh">handoff receipt</span>
+        <span class="sub">append-only. the hash chain is what the plant can check without trusting this app.</span>
+      </div>
+      <div id="receipt-body"></div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------ LEDGER -->
+  <section id="ledger-view" class="view">
+    <div class="wide">
+      <div class="panel-hd">
+        <span class="kh">crate ledger</span>
+        <span class="sub">every crate in this station, and how far each one's evidence actually goes</span>
+      </div>
+      <div id="dash-totals" class="totals"></div>
+      <div class="tierstrip" id="tierstrip"></div>
+      <div id="dash-lots" class="lots"></div>
+      <div class="assume" id="assume"></div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast" hidden></div>
+<script src="/static/app.js"></script>
+</body>
+</html>
